@@ -1,3 +1,118 @@
+@php
+    $steps = [
+        [
+            'icon' => 'log-in',
+            'title' => 'Login Akun',
+            'text' => 'Masukkan username dan password yang telah ditentukan oleh Admin atau Pusat untuk mengakses akun SASKANSA.',
+        ],
+        [
+            'icon' => 'key-round',
+            'title' => 'Atur Password',
+            'text' => 'Setelah berhasil login, pengguna diarahkan ke halaman Atur Password untuk mengganti password sesuai dengan keinginan.',
+        ],
+        [
+            'icon' => 'layout-dashboard',
+            'title' => 'Akses Dashboard',
+            'text' => 'Setelah password berhasil diperbarui, pengguna akan diarahkan ke dashboard sesuai hak akses dan kebutuhan masing-masing.',
+        ],
+    ];
+@endphp
+
+<style>
+    /* Scroll Reveal */
+    #cara-kerja.reveal-ready [data-reveal] {
+        opacity: 0;
+        transform: translateY(28px);
+        filter: blur(6px);
+        transition:
+            opacity .8s cubic-bezier(.22, 1, .36, 1) var(--d, 0s),
+            transform .8s cubic-bezier(.22, 1, .36, 1) var(--d, 0s),
+            filter .8s cubic-bezier(.22, 1, .36, 1) var(--d, 0s);
+        will-change: opacity, transform;
+    }
+
+    #cara-kerja.reveal-ready [data-reveal].is-visible {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+
+    /* Connector Chip (muncul setelah kartu) */
+    #cara-kerja.reveal-ready .cara-chip {
+        opacity: 0;
+        transform: scale(.3);
+        transition:
+            opacity .5s ease calc(var(--d, 0s) + .45s),
+            transform .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d, 0s) + .45s);
+    }
+
+    #cara-kerja.reveal-ready .is-visible .cara-chip {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    @keyframes cara-nudge {
+        0%, 100% { transform: translateX(0); }
+        50%      { transform: translateX(3px); }
+    }
+
+    #cara-kerja .cara-chip svg {
+        animation: cara-nudge 1.6s ease-in-out infinite;
+    }
+
+    /* Badge Dot Pulse */
+    @keyframes cara-pulse {
+        0%   { transform: scale(1);   opacity: .6; }
+        100% { transform: scale(3.2); opacity: 0; }
+    }
+
+    #cara-kerja .cara-dot::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        background: currentColor;
+        animation: cara-pulse 1.8s ease-out infinite;
+    }
+
+    /* Card Spotlight */
+    #cara-kerja .cara-spotlight {
+        background: radial-gradient(
+            220px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(37, 99, 235, .09),
+            transparent 70%
+        );
+    }
+
+    /* Icon Pop */
+    @keyframes cara-icon-pop {
+        0%   { transform: scale(1)   rotate(0); }
+        40%  { transform: scale(1.3) rotate(-10deg); }
+        70%  { transform: scale(.92) rotate(6deg); }
+        100% { transform: scale(1)   rotate(0); }
+    }
+
+    #cara-kerja .cara-card:hover .cara-icon {
+        animation: cara-icon-pop .6s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        #cara-kerja.reveal-ready [data-reveal],
+        #cara-kerja.reveal-ready .cara-chip {
+            opacity: 1;
+            transform: none;
+            filter: none;
+            transition: none;
+        }
+
+        #cara-kerja .cara-dot::after,
+        #cara-kerja .cara-chip svg,
+        #cara-kerja .cara-card:hover .cara-icon {
+            animation: none;
+        }
+    }
+</style>
+
 <section id="cara-kerja" class="bg-[#FDFDFD]">
 
     <div class="mx-auto max-w-7xl px-6 py-20">
@@ -6,22 +121,26 @@
         <div class="text-center">
 
             {{-- Badge --}}
-            <div
-                class="mb-5 inline-flex items-center gap-2
-                       rounded-full bg-blue-50 px-3 py-1.5
-                       text-[10px] font-medium uppercase
-                       tracking-wider text-blue-600"
-            >
-                <span
-                    class="h-1.5 w-1.5 rounded-full bg-blue-600"
-                ></span>
+            <div data-reveal style="--d: 0s">
+                <div
+                    class="mb-5 inline-flex items-center gap-2
+                           rounded-full bg-blue-50 px-3 py-1.5
+                           text-[10px] font-medium uppercase
+                           tracking-wider text-blue-600"
+                >
+                    <span
+                        class="cara-dot relative h-1.5 w-1.5
+                               rounded-full bg-blue-600 text-blue-600"
+                    ></span>
 
-                Digitalisasi Pendidikan
+                    Digitalisasi Pendidikan
+                </div>
             </div>
-
 
             {{-- Heading --}}
             <h2
+                data-reveal
+                style="--d: .1s"
                 class="text-3xl font-semibold tracking-tight
                        text-gray-900 sm:text-4xl"
             >
@@ -29,6 +148,8 @@
             </h2>
 
             <p
+                data-reveal
+                style="--d: .2s"
                 class="mt-3 text-sm font-medium text-gray-500"
             >
                 Mulai Menggunakan SASKANSA dalam 3 Langkah Mudah
@@ -36,190 +157,143 @@
 
         </div>
 
-
         {{-- Steps --}}
-        <div
-            class="mt-10 grid grid-cols-1 gap-5
-                   md:grid-cols-3"
-        >
+        <div class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
 
-            {{-- Step 1 --}}
-            <div
-                class="group rounded-2xl border border-gray-100
-                       bg-white p-6 shadow-sm
-                       transition duration-300
-                       hover:-translate-y-1
-                       hover:border-blue-100
-                       hover:shadow-md"
-            >
+            @foreach ($steps as $step)
+                <div
+                    data-reveal
+                    style="--d: {{ .3 + $loop->index * .15 }}s"
+                    class="relative h-full"
+                >
 
-                <div class="flex items-center gap-3">
-
-                    {{-- Number + Icon --}}
                     <div
-                        class="flex h-10 w-10 shrink-0
-                               items-center justify-center
-                               rounded-xl bg-blue-50
-                               text-blue-600
-                               transition duration-300
-                               group-hover:bg-blue-600
-                               group-hover:text-white"
+                        class="cara-card group relative h-full
+                               overflow-hidden rounded-2xl border
+                               border-gray-100 bg-white p-6 shadow-sm
+                               transition-[transform,box-shadow]
+                               duration-300 ease-out
+                               hover:-translate-y-1.5 hover:shadow-xl
+                               hover:shadow-gray-200/70"
                     >
-                        <x-lucide-log-in class="h-5 w-5" />
-                    </div>
 
-                    <div>
-
+                        {{-- Spotlight --}}
                         <span
-                            class="text-[10px] font-medium
-                                   uppercase tracking-wider
-                                   text-blue-600"
-                        >
-                            Langkah 01
-                        </span>
+                            aria-hidden="true"
+                            class="cara-spotlight pointer-events-none
+                                   absolute inset-0 opacity-0
+                                   transition-opacity duration-300
+                                   group-hover:opacity-100"
+                        ></span>
 
-                        <h3
-                            class="mt-0.5 text-sm font-semibold
-                                   text-gray-900"
-                        >
-                            Login Akun
-                        </h3>
+                        <div class="relative">
+
+                            <div class="flex items-center gap-3">
+
+                                {{-- Icon --}}
+                                <div
+                                    class="flex h-10 w-10 shrink-0
+                                           items-center justify-center
+                                           rounded-xl bg-blue-50
+                                           text-blue-600
+                                           transition-all duration-500
+                                           ease-[cubic-bezier(.34,1.56,.64,1)]
+                                           group-hover:-rotate-6
+                                           group-hover:scale-110
+                                           group-hover:bg-blue-600
+                                           group-hover:text-white
+                                           group-hover:shadow-lg
+                                           group-hover:shadow-blue-600/30"
+                                >
+                                    <x-dynamic-component
+                                        :component="'lucide-' . $step['icon']"
+                                        class="cara-icon h-5 w-5"
+                                    />
+                                </div>
+
+                                <div>
+
+                                    <span
+                                        class="text-[10px] font-medium
+                                               uppercase tracking-wider
+                                               text-blue-600"
+                                    >
+                                        Langkah 0{{ $loop->iteration }}
+                                    </span>
+
+                                    <h3 class="mt-0.5 text-sm font-semibold text-gray-900">
+                                        {{ $step['title'] }}
+                                    </h3>
+
+                                </div>
+
+                            </div>
+
+                            <p class="mt-4 text-xs leading-5 text-gray-500">
+                                {{ $step['text'] }}
+                            </p>
+
+                        </div>
 
                     </div>
+
+                    {{-- Connector antar langkah (desktop) --}}
+                    @unless ($loop->last)
+                        <span
+                            aria-hidden="true"
+                            class="cara-chip absolute -right-5.5 top-8.5
+                                   z-10 hidden h-6 w-6 items-center
+                                   justify-center rounded-full border
+                                   border-gray-100 bg-white text-blue-600
+                                   shadow-sm md:flex"
+                        >
+                            <x-lucide-arrow-right class="h-3 w-3" />
+                        </span>
+                    @endunless
 
                 </div>
-
-
-                <p
-                    class="mt-4 text-xs leading-5 text-gray-500"
-                >
-                    Masukkan username dan password yang telah
-                    ditentukan oleh Admin atau Pusat untuk
-                    mengakses akun SASKANSA.
-                </p>
-
-            </div>
-
-
-            {{-- Step 2 --}}
-            <div
-                class="group rounded-2xl border border-gray-100
-                       bg-white p-6 shadow-sm
-                       transition duration-300
-                       hover:-translate-y-1
-                       hover:border-blue-100
-                       hover:shadow-md"
-            >
-
-                <div class="flex items-center gap-3">
-
-                    {{-- Icon --}}
-                    <div
-                        class="flex h-10 w-10 shrink-0
-                               items-center justify-center
-                               rounded-xl bg-blue-50
-                               text-blue-600
-                               transition duration-300
-                               group-hover:bg-blue-600
-                               group-hover:text-white"
-                    >
-                        <x-lucide-key-round class="h-5 w-5" />
-                    </div>
-
-                    <div>
-
-                        <span
-                            class="text-[10px] font-medium
-                                   uppercase tracking-wider
-                                   text-blue-600"
-                        >
-                            Langkah 02
-                        </span>
-
-                        <h3
-                            class="mt-0.5 text-sm font-semibold
-                                   text-gray-900"
-                        >
-                            Atur Password
-                        </h3>
-
-                    </div>
-
-                </div>
-
-
-                <p
-                    class="mt-4 text-xs leading-5 text-gray-500"
-                >
-                    Setelah berhasil login, pengguna diarahkan
-                    ke halaman Atur Password untuk mengganti
-                    password sesuai dengan keinginan.
-                </p>
-
-            </div>
-
-
-            {{-- Step 3 --}}
-            <div
-                class="group rounded-2xl border border-gray-100
-                       bg-white p-6 shadow-sm
-                       transition duration-300
-                       hover:-translate-y-1
-                       hover:border-blue-100
-                       hover:shadow-md"
-            >
-
-                <div class="flex items-center gap-3">
-
-                    {{-- Icon --}}
-                    <div
-                        class="flex h-10 w-10 shrink-0
-                               items-center justify-center
-                               rounded-xl bg-blue-50
-                               text-blue-600
-                               transition duration-300
-                               group-hover:bg-blue-600
-                               group-hover:text-white"
-                    >
-                        <x-lucide-layout-dashboard
-                            class="h-5 w-5"
-                        />
-                    </div>
-
-                    <div>
-
-                        <span
-                            class="text-[10px] font-medium
-                                   uppercase tracking-wider
-                                   text-blue-600"
-                        >
-                            Langkah 03
-                        </span>
-
-                        <h3
-                            class="mt-0.5 text-sm font-semibold
-                                   text-gray-900"
-                        >
-                            Akses Dashboard
-                        </h3>
-
-                    </div>
-
-                </div>
-
-
-                <p
-                    class="mt-4 text-xs leading-5 text-gray-500"
-                >
-                    Setelah password berhasil diperbarui, pengguna
-                    akan diarahkan ke dashboard sesuai hak akses
-                    dan kebutuhan masing-masing.
-                </p>
-
-            </div>
+            @endforeach
 
         </div>
 
     </div>
+
+    {{-- Script: Reveal + Card Spotlight --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const section = document.getElementById('cara-kerja');
+
+            /* Scroll Reveal */
+            if ('IntersectionObserver' in window) {
+                section.classList.add('reveal-ready');
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+                section
+                    .querySelectorAll('[data-reveal]')
+                    .forEach((el) => observer.observe(el));
+            }
+
+            /* Spotlight mengikuti kursor */
+            const canHover = window.matchMedia('(hover: hover)').matches;
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!canHover || reduceMotion) return;
+
+            section.querySelectorAll('.cara-card').forEach((card) => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+                    card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+                });
+            });
+        });
+    </script>
 
 </section>

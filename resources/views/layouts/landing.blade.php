@@ -22,5 +22,8 @@
     {{-- Footer --}}
     @include('components.layout.footer')
 
+    {{-- Back to Top --}}
+    @include('components.ui.back-to-top')
+
 </body>
 </html>
