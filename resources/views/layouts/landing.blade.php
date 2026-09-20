@@ -12,7 +12,7 @@
 <body>
 
     {{-- Navbar --}}
-    @include('components.navbar')
+    @include('components.layout.navbar')
 
     {{-- Isi Landing Page --}}
     <main>
@@ -20,7 +20,7 @@
     </main>
 
     {{-- Footer --}}
-    @include('components.footer')
+    @include('components.layout.footer')
 
 </body>
 </html>
