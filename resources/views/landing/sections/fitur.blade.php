@@ -343,7 +343,7 @@ $features = [
 
     </div>
 
-    {{-- Script: Reveal + Card Spotlight --}}
+    {{-- Reveal + Card Spotlight --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const section = document.getElementById('fitur');

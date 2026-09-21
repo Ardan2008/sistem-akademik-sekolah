@@ -325,7 +325,7 @@
         </div>
     </div>
 
-    {{-- FAQ Script: Reveal + Smooth Accordion --}}
+    {{-- Reveal + Smooth Accordion --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const section = document.getElementById('faq');

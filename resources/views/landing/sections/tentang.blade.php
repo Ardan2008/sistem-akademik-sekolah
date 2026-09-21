@@ -330,7 +330,7 @@
 
     </div>
 
-    {{-- Script: Reveal + Count Up --}}
+    {{-- Reveal + Count Up --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const section = document.getElementById('tentang');

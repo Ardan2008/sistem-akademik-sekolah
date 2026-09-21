@@ -138,7 +138,6 @@
                 </div>
             </div>
 
-
             {{-- Heading --}}
             <h1
                 class="text-[2.5rem] font-semibold leading-[1.1]
@@ -240,9 +239,6 @@
         {{-- Dashboard Preview --}}
         <div class="relative flex items-center justify-center lg:justify-end">
 
-            {{-- Dashboard Composition
-                 Memakai aspect-ratio + posisi persen, jadi seluruh susunan
-                 kartu ikut mengecil proporsional di layar apa pun. --}}
             <div
                 id="hero-composition"
                 class="relative aspect-[155/140] w-full max-w-md
@@ -333,7 +329,7 @@
 
     </div>
 
-    {{-- Script: Parallax kursor pada dashboard --}}
+    {{-- Parallax kursor pada dashboard --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const section = document.getElementById('beranda');

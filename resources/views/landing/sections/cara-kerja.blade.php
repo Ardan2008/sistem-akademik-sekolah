@@ -174,7 +174,7 @@
 
         {{-- Steps
              HP/tablet kecil: bertumpuk vertikal dengan panah ke bawah
-             md ke atas     : 3 kolom dengan panah ke kanan --}}
+             md ke atas: 3 kolom dengan panah ke kanan --}}
         <div
             class="mx-auto mt-8 grid max-w-lg grid-cols-1 gap-7
                    sm:mt-10
@@ -262,7 +262,7 @@
                     </div>
 
                     {{-- Connector antar langkah
-                         HP     : di bawah kartu, panah menghadap ke bawah (chip diputar 90deg)
+                         HP: di bawah kartu, panah menghadap ke bawah (chip diputar 90deg)
                          md ke atas: di sisi kanan kartu, panah menghadap ke kanan --}}
                     @unless ($loop->last)
                         <span
@@ -287,7 +287,7 @@
 
     </div>
 
-    {{-- Script: Reveal + Card Spotlight --}}
+    {{-- Reveal + Card Spotlight --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const section = document.getElementById('cara-kerja');

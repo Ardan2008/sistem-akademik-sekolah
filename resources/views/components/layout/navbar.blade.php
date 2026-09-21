@@ -59,8 +59,17 @@
             @foreach ($links as $link)
                 <li>
                     <a href="{{ route('beranda') }}#{{ $link['hash'] }}"
-                       class="transition hover:text-blue-600">
+                       data-hash="{{ $link['hash'] }}"
+                       data-nav-link
+                       class="nav-link relative inline-block py-2 text-gray-700
+                              transition-colors duration-300 hover:text-blue-600">
                         {{ $link['label'] }}
+                        <span
+                            data-underline
+                            class="pointer-events-none absolute inset-x-0 -bottom-0.5 h-0.5
+                                   origin-center scale-x-0 rounded-full bg-blue-600
+                                   transition-transform duration-300 ease-out"
+                        ></span>
                     </a>
                 </li>
             @endforeach
@@ -126,14 +135,16 @@
                            motion-reduce:transition-none"
                 >
                     <a href="{{ route('beranda') }}#{{ $link['hash'] }}"
+                       data-hash="{{ $link['hash'] }}"
+                       data-nav-link
                        data-menu-link
-                       class="flex items-center justify-between rounded-2xl px-4 py-3
-                              text-base font-medium text-gray-800 transition
+                       class="nav-link-mobile flex items-center justify-between rounded-2xl px-4 py-3
+                              text-base font-medium text-gray-800 transition-colors duration-300
                               hover:bg-blue-50 hover:text-blue-600
                               focus-visible:outline focus-visible:outline-2
                               focus-visible:outline-blue-500">
                         {{ $link['label'] }}
-                        <svg class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="none"
+                        <svg data-chevron class="h-4 w-4 text-gray-300 transition-colors duration-300" viewBox="0 0 20 20" fill="none"
                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                              stroke-linejoin="round" aria-hidden="true">
                             <path d="M7 4l6 6-6 6" />
@@ -161,16 +172,32 @@
         </div>
     </div>
 
+    <style>
+        .nav-link.is-active {
+            color: #2563eb; /* blue-600 */
+        }
+        .nav-link.is-active [data-underline] {
+            transform: scaleX(1);
+        }
+        .nav-link-mobile.is-active {
+            color: #2563eb;
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .nav-link-mobile.is-active [data-chevron] {
+            color: #2563eb;
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const navbar   = document.getElementById('site-navbar');
             const toggle   = document.getElementById('nav-toggle');
             const backdrop = document.getElementById('nav-backdrop');
             const menu     = document.getElementById('mobile-menu');
-            const THRESHOLD = 10; // jarak scroll (px) sebelum navbar berubah
+            const THRESHOLD = 10; 
             let ticking = false;
 
-            /* ---------- Efek scroll ---------- */
+            /* Efek scroll (bentuk navbar) */
             const update = () => {
                 const next = window.scrollY > THRESHOLD ? 'true' : 'false';
                 if (navbar.dataset.scrolled !== next) navbar.dataset.scrolled = next;
@@ -186,7 +213,7 @@
 
             update(); // kondisi awal (misal reload di tengah halaman)
 
-            /* ---------- Menu mobile ---------- */
+            /* Menu mobile */
             const setMenu = (open) => {
                 navbar.dataset.open = open ? 'true' : 'false';
                 toggle.setAttribute('aria-expanded', open);
@@ -217,6 +244,61 @@
             window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
                 if (e.matches) setMenu(false);
             });
+
+            /* Scrollspy: highlight link menetap + update hash URL */
+            const hashes   = @json(array_column($links, 'hash'));
+            const navLinks = document.querySelectorAll('[data-nav-link]');
+            const sections = hashes
+                .map((id) => document.getElementById(id))
+                .filter(Boolean);
+
+            const setActive = (hash) => {
+                navLinks.forEach((link) => {
+                    const active = link.dataset.hash === hash;
+                    link.classList.toggle('is-active', active);
+                });
+            };
+
+            // Klik: langsung "menetap" ke link yang ditekan, tanpa menunggu scroll settle
+            navLinks.forEach((link) => {
+                link.addEventListener('click', () => {
+                    setActive(link.dataset.hash);
+                });
+            });
+
+            if (sections.length) {
+                let currentHash = null;
+
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        // Pilih section paling atas yang sedang terlihat di "zona aktif"
+                        const visible = entries
+                            .filter((entry) => entry.isIntersecting)
+                            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+                        if (visible.length > 0) {
+                            const id = visible[0].target.id;
+                            if (id !== currentHash) {
+                                currentHash = id;
+                                setActive(id);
+                                history.replaceState(null, '', `#${id}`);
+                            }
+                        }
+                    },
+                    {
+                        // Zona aktif: pita horizontal di sekitar tengah layar
+                        root: null,
+                        rootMargin: '-96px 0px -55% 0px',
+                        threshold: 0,
+                    }
+                );
+
+                sections.forEach((section) => observer.observe(section));
+
+                // State awal: pakai hash di URL kalau ada, kalau tidak pakai link pertama
+                const initialHash = window.location.hash.replace('#', '') || hashes[0];
+                setActive(initialHash);
+            }
         });
     </script>
 
