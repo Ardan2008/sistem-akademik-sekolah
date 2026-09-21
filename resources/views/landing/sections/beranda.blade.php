@@ -64,6 +64,18 @@
             hero-float var(--float, 6s) ease-in-out calc(var(--d, 0s) + 1s) infinite;
     }
 
+    /* Di HP gerakan float dikurangi agar kartu tidak keluar dari area */
+    @media (max-width: 639px) {
+        #beranda .hero-card {
+            --float: 7s;
+        }
+
+        @keyframes hero-float {
+            0%, 100% { transform: translateY(0)    rotate(var(--r, 0deg)); }
+            50%      { transform: translateY(-5px) rotate(var(--r, 0deg)); }
+        }
+    }
+
     #beranda .hero-blob {
         animation: hero-blob 8s ease-in-out infinite;
     }
@@ -99,13 +111,15 @@
     class="relative overflow-hidden bg-[#FDFDFD]"
 >
     <div
-        class="mx-auto grid min-h-[calc(100vh-64px)] max-w-7xl
-               items-center gap-8 px-6 py-10
-               lg:grid-cols-2 lg:gap-4 lg:py-12"
+        class="mx-auto grid max-w-7xl items-center gap-10
+               px-4 pb-14 pt-8
+               sm:px-6 sm:pt-12 sm:pb-16
+               lg:min-h-[calc(100svh-64px)] lg:grid-cols-2 lg:gap-4
+               lg:py-12"
     >
 
         {{-- Hero Content --}}
-        <div class="max-w-xl">
+        <div class="mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
 
             {{-- Badge --}}
             <div class="hero-fade" style="--d: .05s">
@@ -127,8 +141,9 @@
 
             {{-- Heading --}}
             <h1
-                class="text-4xl font-semibold leading-tight
-                       tracking-tight text-gray-900 sm:text-5xl"
+                class="text-[2.5rem] font-semibold leading-[1.1]
+                       tracking-tight text-gray-900
+                       sm:text-5xl sm:leading-tight"
             >
                 <span class="hero-line">
                     <span class="hero-line-inner" style="--d: .15s">
@@ -145,7 +160,8 @@
 
             {{-- Description --}}
             <p
-                class="hero-fade mt-5 max-w-lg text-sm leading-6 text-gray-600"
+                class="hero-fade mx-auto mt-5 max-w-lg text-[15px] leading-7
+                       text-gray-600 sm:text-sm sm:leading-6 lg:mx-0"
                 style="--d: .45s"
             >
                 SASKANSA membantu sekolah mengelola data siswa, guru,
@@ -155,20 +171,26 @@
 
             {{-- Button --}}
             <div
-                class="hero-fade mt-8 flex items-center gap-3"
+                class="hero-fade mt-8 flex flex-col items-stretch gap-3
+                       sm:flex-row sm:items-center sm:justify-center
+                       lg:justify-start"
                 style="--d: .6s"
             >
 
                 {{-- Mulai Sekarang --}}
                 <a
                     href="{{ route('login') }}"
-                    class="group relative inline-flex items-center gap-2.5
-                           overflow-hidden rounded-lg bg-blue-600 px-5 py-3
-                           text-xs font-medium text-white
+                    class="group relative inline-flex items-center justify-center
+                           gap-2.5 overflow-hidden rounded-lg bg-blue-600
+                           px-5 py-3.5 text-sm font-medium text-white
                            transition duration-300
                            hover:-translate-y-0.5 hover:bg-blue-700
                            hover:shadow-lg hover:shadow-blue-600/25
-                           active:translate-y-0"
+                           focus-visible:outline focus-visible:outline-2
+                           focus-visible:outline-offset-2
+                           focus-visible:outline-blue-500
+                           active:translate-y-0 active:scale-[0.98]
+                           sm:py-3 sm:text-xs"
                 >
                     {{-- Shine --}}
                     <span
@@ -194,13 +216,17 @@
                 {{-- Pelajari Fitur --}}
                 <a
                     href="{{ route('beranda') }}#fitur"
-                    class="group inline-flex items-center gap-2
+                    class="group inline-flex items-center justify-center gap-2
                            rounded-lg border border-blue-200
-                           bg-blue-50 px-5 py-3
-                           text-xs font-medium text-blue-600
+                           bg-blue-50 px-5 py-3.5
+                           text-sm font-medium text-blue-600
                            transition duration-300
                            hover:-translate-y-0.5 hover:bg-blue-100
-                           active:translate-y-0"
+                           focus-visible:outline focus-visible:outline-2
+                           focus-visible:outline-offset-2
+                           focus-visible:outline-blue-500
+                           active:translate-y-0 active:scale-[0.98]
+                           sm:py-3 sm:text-xs"
                 >
                     <span>
                         Pelajari Fitur
@@ -212,21 +238,19 @@
         </div>
 
         {{-- Dashboard Preview --}}
-        <div
-            class="relative flex min-h-140
-                   items-center justify-center
-                   lg:justify-end"
-        >
+        <div class="relative flex items-center justify-center lg:justify-end">
 
-            {{-- Dashboard Composition --}}
+            {{-- Dashboard Composition
+                 Memakai aspect-ratio + posisi persen, jadi seluruh susunan
+                 kartu ikut mengecil proporsional di layar apa pun. --}}
             <div
                 id="hero-composition"
-                class="relative h-140
-                       w-full max-w-155"
+                class="relative aspect-[155/140] w-full max-w-md
+                       sm:max-w-xl lg:max-w-155"
             >
                 {{-- Dashboard Guru --}}
                 <div
-                    class="absolute right-6 top-2 z-10
+                    class="absolute right-[4%] top-[1.5%] z-10
                            w-[64%] hover:z-40"
                 >
                     <div
@@ -234,14 +258,16 @@
                         style="--r: -2deg; --d: .55s; --depth: 10; --float: 6.5s"
                     >
                         <div
-                            class="overflow-hidden rounded-xl
-                                   shadow-xl
+                            class="overflow-hidden rounded-lg shadow-lg
                                    transition duration-300
-                                   hover:scale-[1.02]"
+                                   hover:scale-[1.02] sm:rounded-xl sm:shadow-xl"
                         >
                             <img
                                 src="{{ asset('image/dashboard-guru.webp') }}"
                                 alt="Dashboard Guru"
+                                width="620"
+                                loading="eager"
+                                decoding="async"
                                 class="block h-auto w-full object-contain"
                             >
                         </div>
@@ -250,7 +276,7 @@
 
                 {{-- Dashboard Siswa --}}
                 <div
-                    class="absolute right-0 top-55 z-20
+                    class="absolute right-0 top-[39%] z-20
                            w-[64%] hover:z-40"
                 >
                     <div
@@ -258,14 +284,16 @@
                         style="--r: 2deg; --d: .75s; --depth: 16; --float: 7s"
                     >
                         <div
-                            class="overflow-hidden rounded-xl
-                                   shadow-xl
+                            class="overflow-hidden rounded-lg shadow-lg
                                    transition duration-300
-                                   hover:scale-[1.02]"
+                                   hover:scale-[1.02] sm:rounded-xl sm:shadow-xl"
                         >
                             <img
                                 src="{{ asset('image/dashboard-siswa.webp') }}"
                                 alt="Dashboard Siswa"
+                                width="620"
+                                loading="eager"
+                                decoding="async"
                                 class="block h-auto w-full object-contain"
                             >
                         </div>
@@ -274,7 +302,7 @@
 
                 {{-- Dashboard Admin --}}
                 <div
-                    class="absolute left-1/2 top-16 z-30
+                    class="absolute left-1/2 top-[11.5%] z-30
                            w-[72%]
                            -translate-x-1/2"
                 >
@@ -283,14 +311,16 @@
                         style="--r: 0deg; --d: .35s; --depth: 24; --float: 5.5s"
                     >
                         <div
-                            class="overflow-hidden rounded-xl
-                                   shadow-2xl
+                            class="overflow-hidden rounded-lg shadow-xl
                                    transition duration-300
-                                   hover:scale-[1.02]"
+                                   hover:scale-[1.02] sm:rounded-xl sm:shadow-2xl"
                         >
                             <img
                                 src="{{ asset('image/dashboard-admin.webp') }}"
                                 alt="Dashboard Admin"
+                                width="720"
+                                loading="eager"
+                                decoding="async"
                                 class="block h-auto w-full object-contain"
                             >
                         </div>

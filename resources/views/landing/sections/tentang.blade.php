@@ -17,6 +17,13 @@
         filter: none;
     }
 
+    /* Di layar kecil kolom bertumpuk: hilangkan jeda bertahap agar terasa responsif */
+    @media (max-width: 639px) {
+        #tentang [data-reveal] {
+            --d: 0s !important;
+        }
+    }
+
     /* Image Reveal (tirai terbuka dari kiri) */
     #tentang.reveal-ready [data-reveal="image"] {
         opacity: 1;
@@ -43,10 +50,12 @@
         transform: scale(1);
     }
 
-    /* Hover zoom setelah reveal selesai */
-    #tentang .tentang-image:hover img {
-        transform: scale(1.06) !important;
-        transition: transform .9s cubic-bezier(.22, 1, .36, 1) !important;
+    /* Hover zoom setelah reveal selesai (hanya perangkat dengan hover) */
+    @media (hover: hover) {
+        #tentang .tentang-image:hover img {
+            transform: scale(1.06) !important;
+            transition: transform .9s cubic-bezier(.22, 1, .36, 1) !important;
+        }
     }
 
     /* Garis bawah "Terintegrasi" */
@@ -154,11 +163,13 @@
     }
 </style>
 
-<section id="tentang" class="bg-[#FDFDFD]">
+<section id="tentang" class="scroll-mt-16 bg-[#FDFDFD]">
 
     <div
-        class="mx-auto grid max-w-7xl items-center gap-12
-               px-6 py-20 lg:grid-cols-2"
+        class="mx-auto grid max-w-7xl items-center gap-10
+               px-4 py-16
+               sm:gap-12 sm:px-6 sm:py-20
+               lg:grid-cols-2 lg:gap-16 lg:py-24"
     >
 
         {{-- Image --}}
@@ -167,10 +178,15 @@
             style="--d: 0s"
             class="tentang-image"
         >
-            <div class="tentang-image-inner overflow-hidden rounded-2xl">
+            <div
+                class="tentang-image-inner aspect-[4/3] overflow-hidden
+                       rounded-2xl sm:aspect-[16/10] lg:aspect-auto"
+            >
                 <img
                     src="{{ asset('image/about/about-image.webp') }}"
                     alt="Aktivitas pembelajaran sekolah"
+                    loading="lazy"
+                    decoding="async"
                     class="h-full w-full object-cover"
                 >
             </div>
@@ -182,10 +198,10 @@
             {{-- Badge --}}
             <div data-reveal style="--d: .15s">
                 <div
-                    class="mb-5 inline-flex items-center gap-2
+                    class="mb-4 inline-flex items-center gap-2
                            rounded-full bg-blue-50 px-3 py-1.5
                            text-[10px] font-medium uppercase
-                           tracking-wider text-blue-600"
+                           tracking-wider text-blue-600 sm:mb-5"
                 >
                     <span
                         class="tentang-dot relative h-1.5 w-1.5
@@ -200,12 +216,12 @@
             <h2
                 data-reveal
                 style="--d: .25s"
-                class="isolate max-w-lg text-3xl font-semibold
-                       leading-tight tracking-tight text-gray-900
-                       sm:text-4xl"
+                class="isolate max-w-lg text-[1.75rem] font-semibold
+                       leading-snug tracking-tight text-gray-900
+                       sm:text-4xl sm:leading-tight"
             >
                 Mengenal Platform
-                <br>
+                <br class="hidden sm:block">
                 Administrasi Sekolah yang
                 <span class="tentang-mark text-blue-600">
                     Terintegrasi
@@ -220,8 +236,8 @@
             <p
                 data-reveal
                 style="--d: .35s"
-                class="mt-5 max-w-xl text-sm
-                       leading-6 text-gray-600"
+                class="mt-4 max-w-xl text-[15px] leading-7 text-gray-600
+                       sm:mt-5 sm:text-sm sm:leading-6"
             >
                 SASKANSA dirancang untuk membantu sekolah beradaptasi
                 dengan kebutuhan administrasi. Semua informasi akademik
@@ -230,11 +246,15 @@
             </p>
 
             {{-- Statistics --}}
-            <div class="mt-8 grid grid-cols-2 gap-6">
+            <div class="mt-7 grid grid-cols-2 gap-4 sm:mt-8 sm:gap-6">
 
                 {{-- Data Siswa --}}
                 <div data-reveal style="--d: .45s">
-                    <div class="tentang-stat group flex items-center gap-3">
+                    <div
+                        class="tentang-stat group flex items-center gap-3
+                               rounded-2xl border border-gray-100 bg-white p-3
+                               sm:border-0 sm:bg-transparent sm:p-0"
+                    >
 
                         <div
                             class="tentang-icon flex h-11 w-11 shrink-0
@@ -253,7 +273,7 @@
                             <x-lucide-users-round class="h-5 w-5" />
                         </div>
 
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-xl font-semibold text-gray-900">
                                 <span data-count="2000">2000</span>+
                             </p>
@@ -268,7 +288,11 @@
 
                 {{-- Guru Aktif --}}
                 <div data-reveal style="--d: .55s">
-                    <div class="tentang-stat group flex items-center gap-3">
+                    <div
+                        class="tentang-stat group flex items-center gap-3
+                               rounded-2xl border border-gray-100 bg-white p-3
+                               sm:border-0 sm:bg-transparent sm:p-0"
+                    >
 
                         <div
                             class="tentang-icon flex h-11 w-11 shrink-0
@@ -287,7 +311,7 @@
                             <x-lucide-graduation-cap class="h-5 w-5" />
                         </div>
 
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-xl font-semibold text-gray-900">
                                 <span data-count="2000">2000</span>+
                             </p>

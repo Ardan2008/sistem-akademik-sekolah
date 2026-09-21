@@ -7,7 +7,7 @@
     ];
 
     $quickLinks = [
-        ['label' => 'Beranda', 'href' => route('beranda')],
+        ['label' => 'Beranda', 'href' => route('beranda') . '#beranda'],
         ['label' => 'Tentang', 'href' => route('beranda') . '#tentang'],
         ['label' => 'Fitur', 'href' => route('beranda') . '#fitur'],
         ['label' => 'Cara Kerja', 'href' => route('beranda') . '#cara-kerja'],
@@ -37,6 +37,13 @@
         opacity: 1;
         transform: none;
         filter: none;
+    }
+
+    /* Di layar kecil kolom bertumpuk: tidak perlu jeda bertahap */
+    @media (max-width: 639px) {
+        #site-footer [data-reveal] {
+            --d: 0s !important;
+        }
     }
 
     /* ---------- Garis atas: kilau bergerak ---------- */
@@ -99,18 +106,31 @@
         transition: transform .35s cubic-bezier(.22, 1, .36, 1);
     }
 
-    #site-footer .footer-link:hover,
     #site-footer .footer-link:focus-visible {
         color: #fff;
+        outline: 2px solid #60a5fa;
+        outline-offset: 4px;
+        border-radius: 2px;
     }
 
-    #site-footer .footer-link:hover::after,
     #site-footer .footer-link:focus-visible::after {
         transform: scaleX(1);
     }
 
-    #site-footer .footer-list .footer-link:hover {
-        transform: translateX(4px);
+    /* Efek hover hanya untuk perangkat yang benar-benar punya hover
+       (mencegah efek "nyangkut" setelah tap di HP) */
+    @media (hover: hover) {
+        #site-footer .footer-link:hover {
+            color: #fff;
+        }
+
+        #site-footer .footer-link:hover::after {
+            transform: scaleX(1);
+        }
+
+        #site-footer .footer-list .footer-link:hover {
+            transform: translateX(4px);
+        }
     }
 
     /* ---------- Ikon sosial: pop ---------- */
@@ -121,7 +141,8 @@
         100% { transform: scale(1)   rotate(0); }
     }
 
-    #site-footer .footer-social:hover svg {
+    #site-footer .footer-social:hover svg,
+    #site-footer .footer-social:focus-visible svg {
         animation: footer-pop .55s ease-in-out;
     }
 
@@ -135,7 +156,8 @@
 
         #site-footer .footer-sweep,
         #site-footer .footer-glow,
-        #site-footer .footer-social:hover svg {
+        #site-footer .footer-social:hover svg,
+        #site-footer .footer-social:focus-visible svg {
             animation: none;
         }
 
@@ -174,42 +196,58 @@
                bg-blue-600/15 blur-3xl"
     ></span>
 
-    <div class="relative mx-auto max-w-7xl px-6 py-12">
+    <div
+        class="relative mx-auto max-w-7xl px-4 pt-12
+               pb-[max(2rem,env(safe-area-inset-bottom))]
+               sm:px-6 sm:pt-14 lg:pt-16"
+    >
 
-        {{-- Footer Content --}}
-        <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        {{-- Footer Content
+             Mobile : brand penuh, Quick Links & Fitur berdampingan, Kontak penuh
+             Tablet : sama, dengan kontak tersusun 2-3 kolom
+             Desktop: 4 kolom --}}
+        <div
+            class="grid grid-cols-2 gap-x-6 gap-y-10
+                   sm:gap-x-10
+                   lg:grid-cols-[1.4fr_1fr_1fr_1.3fr] lg:gap-x-12"
+        >
 
             {{-- Brand --}}
-            <div data-reveal style="--d: 0s">
+            <div data-reveal style="--d: 0s" class="col-span-2 lg:col-span-1">
 
                 <h2 class="footer-brand text-lg font-semibold text-white">
                     SASKANSA
                 </h2>
 
-                <p class="mt-4 max-w-xs text-xs leading-relaxed text-gray-400">
+                <p class="mt-4 max-w-md text-[13px] leading-relaxed text-gray-400
+                          sm:text-xs lg:max-w-xs">
                     Sistem Akademik Sekolah yang membantu mengelola
                     data dan informasi akademik secara terstruktur
                     dalam satu platform.
                 </p>
 
                 {{-- Social Media --}}
-                <div class="mt-5 flex gap-2">
+                <div class="mt-5 flex flex-wrap gap-2.5 sm:gap-2">
 
                     @foreach ($socials as $social)
                         <a
                             href="{{ $social['href'] }}"
                             aria-label="{{ $social['label'] }}"
-                            class="footer-social flex h-8 w-8 items-center
+                            class="footer-social flex h-10 w-10 items-center
                                    justify-center rounded-full
                                    bg-blue-600 text-white
                                    transition duration-300
                                    hover:-translate-y-1 hover:bg-blue-500
                                    hover:shadow-lg hover:shadow-blue-500/40
-                                   active:translate-y-0"
+                                   focus-visible:outline focus-visible:outline-2
+                                   focus-visible:outline-offset-2
+                                   focus-visible:outline-blue-300
+                                   active:translate-y-0 active:scale-95
+                                   sm:h-8 sm:w-8"
                         >
                             <x-dynamic-component
                                 :component="'lucide-' . $social['icon']"
-                                class="h-4 w-4"
+                                class="h-[18px] w-[18px] sm:h-4 sm:w-4"
                             />
                         </a>
                     @endforeach
@@ -220,18 +258,17 @@
             {{-- Quick Links --}}
             <div data-reveal style="--d: .12s">
 
-                <h3
-                    class="text-xs font-medium tracking-widest
-                           text-gray-300"
-                >
+                <h3 class="text-xs font-medium tracking-widest text-gray-300">
                     Quick Links
                 </h3>
 
-                <ul class="footer-list mt-5 space-y-3 text-xs text-gray-400">
+                <ul class="footer-list mt-4 space-y-1.5 text-[13px] text-gray-400
+                           sm:mt-5 sm:space-y-3 sm:text-xs">
 
                     @foreach ($quickLinks as $link)
                         <li>
-                            <a href="{{ $link['href'] }}" class="footer-link">
+                            <a href="{{ $link['href'] }}"
+                               class="footer-link py-1.5 sm:py-0">
                                 {{ $link['label'] }}
                             </a>
                         </li>
@@ -243,18 +280,16 @@
             {{-- Fitur Platform --}}
             <div data-reveal style="--d: .24s">
 
-                <h3
-                    class="text-xs font-medium tracking-widest
-                           text-gray-300"
-                >
+                <h3 class="text-xs font-medium tracking-widest text-gray-300">
                     Fitur Platform
                 </h3>
 
-                <ul class="footer-list mt-5 space-y-3 text-xs text-gray-400">
+                <ul class="footer-list mt-4 space-y-1.5 text-[13px] text-gray-400
+                           sm:mt-5 sm:space-y-3 sm:text-xs">
 
                     @foreach ($platformLinks as $label)
                         <li>
-                            <a href="#" class="footer-link">
+                            <a href="#" class="footer-link py-1.5 sm:py-0">
                                 {{ $label }}
                             </a>
                         </li>
@@ -264,16 +299,17 @@
             </div>
 
             {{-- Kontak --}}
-            <div data-reveal style="--d: .36s">
+            <div data-reveal style="--d: .36s" class="col-span-2 lg:col-span-1">
 
-                <h3
-                    class="text-xs font-medium tracking-widest
-                           text-gray-300"
-                >
+                <h3 class="text-xs font-medium tracking-widest text-gray-300">
                     Kontak
                 </h3>
 
-                <div class="mt-5 space-y-5 text-xs text-gray-400">
+                <div
+                    class="mt-4 grid gap-5 text-[13px] text-gray-400
+                           sm:mt-5 sm:grid-cols-2 sm:text-xs
+                           md:grid-cols-3 lg:grid-cols-1"
+                >
 
                     {{-- Lokasi --}}
                     <div class="group flex items-start gap-3">
@@ -286,7 +322,7 @@
                                    group-hover:scale-125"
                         />
 
-                        <div>
+                        <div class="min-w-0">
                             <p class="font-medium text-white">
                                 Lokasi
                             </p>
@@ -311,20 +347,23 @@
                                    group-hover:scale-125"
                         />
 
-                        <div>
+                        <div class="min-w-0">
                             <p class="font-medium text-white">
                                 Telepon
                             </p>
 
                             <p class="mt-2">
-                                +62 815-7585-8150
+                                <a href="tel:+6281575858150"
+                                   class="footer-link">
+                                    +62 815-7585-8150
+                                </a>
                             </p>
                         </div>
 
                     </div>
 
                     {{-- Email --}}
-                    <div class="group flex items-start gap-3">
+                    <div class="group flex items-start gap-3 sm:col-span-2 md:col-span-1">
 
                         <x-lucide-mail
                             class="mt-0.5 h-4 w-4 shrink-0 text-blue-500
@@ -334,13 +373,16 @@
                                    group-hover:scale-125"
                         />
 
-                        <div>
+                        <div class="min-w-0">
                             <p class="font-medium text-white">
                                 Email
                             </p>
 
-                            <p class="mt-2">
-                                saskansa@gmail.com
+                            <p class="mt-2 break-words">
+                                <a href="mailto:saskansa@gmail.com"
+                                   class="footer-link">
+                                    saskansa@gmail.com
+                                </a>
                             </p>
                         </div>
 
@@ -355,26 +397,26 @@
         <div
             data-reveal
             style="--d: .45s"
-            class="mt-10 flex flex-col gap-4
-                   border-t border-gray-800 pt-5
-                   text-[10px] text-gray-400
-                   sm:flex-row sm:items-center
-                   sm:justify-between"
+            class="mt-10 flex flex-col items-center gap-3
+                   border-t border-gray-800 pt-6 text-center
+                   text-xs text-gray-400
+                   sm:flex-row sm:justify-between sm:gap-4
+                   sm:text-left sm:text-[10px]"
         >
 
             <p>
                 © {{ date('Y') }} SASKANSA. All rights reserved.
             </p>
 
-            <div class="flex gap-2">
+            <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
 
-                <a href="#" class="footer-link">
+                <a href="#" class="footer-link py-1 sm:py-0">
                     Privacy Policy
                 </a>
 
-                <span>|</span>
+                <span aria-hidden="true" class="text-gray-600">|</span>
 
-                <a href="#" class="footer-link">
+                <a href="#" class="footer-link py-1 sm:py-0">
                     Terms of Service
                 </a>
 
@@ -400,7 +442,7 @@
                         observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
+            }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
 
             footer
                 .querySelectorAll('[data-reveal]')

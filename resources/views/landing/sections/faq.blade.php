@@ -32,14 +32,27 @@
         will-change: opacity, transform;
     }
 
-    #faq.reveal-ready [data-reveal="right"] {
-        transform: translateX(32px) scale(.97);
+    /* Kartu bantuan masuk dari kanan hanya saat 2 kolom (desktop).
+       Saat bertumpuk, masuk dari bawah supaya tidak menyebabkan scroll horizontal. */
+    @media (min-width: 1024px) {
+        #faq.reveal-ready [data-reveal="right"] {
+            transform: translateX(32px) scale(.97);
+        }
     }
 
     #faq.reveal-ready [data-reveal].is-visible {
         opacity: 1;
         transform: none;
         filter: none;
+    }
+
+    /* Jeda daftar FAQ: tanpa jeda di HP, bertahap mulai tablet */
+    #faq .faq-item {
+        --d: 0s;
+    }
+
+    @media (min-width: 640px) {
+        #faq .faq-item { --d: var(--dl, 0s); }
     }
 
     /* FAQ Answer Text */
@@ -78,8 +91,11 @@
         75%      { transform: rotate(-6deg); }
     }
 
-    #faq .faq-cta:hover .faq-headset {
-        animation: faq-wiggle .6s ease-in-out;
+    /* Efek hover hanya untuk perangkat yang punya hover */
+    @media (hover: hover) {
+        #faq .faq-cta:hover .faq-headset {
+            animation: faq-wiggle .6s ease-in-out;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -103,11 +119,12 @@
     }
 </style>
 
-<section id="faq" class="bg-[#FDFDFD]">
+{{-- overflow-x-clip: mencegah scroll horizontal akibat animasi masuk dari samping --}}
+<section id="faq" class="scroll-mt-16 overflow-x-clip bg-[#FDFDFD]">
 
-    <div class="mx-auto max-w-7xl px-6 py-20">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:py-20">
 
-        <div class="grid items-start gap-10 lg:grid-cols-2">
+        <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-12">
 
             {{-- FAQ Content --}}
             <div>
@@ -115,10 +132,10 @@
                 {{-- Badge --}}
                 <div data-reveal style="--d: 0s">
                     <div
-                        class="mb-5 inline-flex items-center gap-2
+                        class="mb-4 inline-flex items-center gap-2
                                rounded-full bg-blue-50 px-3 py-1.5
                                text-[10px] font-medium uppercase
-                               tracking-wider text-blue-600"
+                               tracking-wider text-blue-600 sm:mb-5"
                     >
                         <span
                             class="faq-dot relative h-1.5 w-1.5
@@ -133,7 +150,7 @@
                 <h2
                     data-reveal
                     style="--d: .1s"
-                    class="max-w-md text-3xl font-semibold
+                    class="max-w-md text-[1.75rem] font-semibold
                            leading-tight tracking-tight
                            text-gray-900 sm:text-4xl"
                 >
@@ -144,10 +161,14 @@
                 </h2>
 
                 {{-- FAQ List --}}
-                <div class="mt-10 space-y-3">
+                <div class="mt-8 space-y-3 sm:mt-10">
 
                     @foreach ($faqs as $faq)
-                        <div data-reveal style="--d: {{ .2 + $loop->index * .1 }}s">
+                        <div
+                            data-reveal
+                            style="--dl: {{ .2 + $loop->index * .1 }}s"
+                            class="faq-item"
+                        >
                             <details
                                 data-faq
                                 data-state="{{ $loop->first ? 'open' : 'closed' }}"
@@ -162,22 +183,26 @@
                             >
 
                                 <summary
-                                    class="flex cursor-pointer list-none
-                                           items-center justify-between
-                                           px-5 py-5 text-xs font-semibold
+                                    class="flex min-h-14 cursor-pointer list-none
+                                           items-center justify-between gap-4
+                                           px-4 py-4 text-sm font-semibold
                                            text-gray-900 outline-none
-                                           focus:outline-none
+                                           focus-visible:ring-2
+                                           focus-visible:ring-inset
+                                           focus-visible:ring-blue-500
+                                           sm:px-5 sm:py-5 sm:text-xs
                                            [&::-webkit-details-marker]:hidden"
                                 >
                                     <span
-                                        class="transition-colors duration-300
+                                        class="min-w-0 leading-snug
+                                               transition-colors duration-300
                                                group-data-[state=open]:text-blue-600"
                                     >
                                         {{ $faq['q'] }}
                                     </span>
 
                                     <span
-                                        class="ml-4 flex h-7 w-7 shrink-0
+                                        class="flex h-8 w-8 shrink-0
                                                items-center justify-center
                                                rounded-full bg-gray-50
                                                text-gray-400
@@ -185,7 +210,8 @@
                                                ease-[cubic-bezier(.34,1.56,.64,1)]
                                                group-hover:scale-110
                                                group-data-[state=open]:bg-blue-50
-                                               group-data-[state=open]:text-blue-600"
+                                               group-data-[state=open]:text-blue-600
+                                               sm:h-7 sm:w-7"
                                     >
                                         <x-lucide-chevron-down
                                             class="h-4 w-4
@@ -199,8 +225,9 @@
 
                                 {{-- Animated Content --}}
                                 <div data-faq-content class="overflow-hidden">
-                                    <div class="px-5 pb-5">
-                                        <p class="text-[11px] leading-5 text-gray-500">
+                                    <div class="px-4 pb-4 sm:px-5 sm:pb-5">
+                                        <p class="text-[13px] leading-relaxed text-gray-500
+                                                  sm:text-[11px] sm:leading-5">
                                             {{ $faq['a'] }}
                                         </p>
                                     </div>
@@ -227,6 +254,8 @@
                         <img
                             src="{{ asset('image/faq/faq-ilustrasi.webp') }}"
                             alt="Ilustrasi bantuan dan FAQ SASKANSA"
+                            loading="lazy"
+                            decoding="async"
                             class="h-auto w-full object-cover
                                    transition-transform duration-700
                                    ease-out
@@ -235,13 +264,14 @@
                     </div>
 
                     {{-- Help Content --}}
-                    <div class="p-6">
+                    <div class="p-5 sm:p-6">
 
                         <h3 class="text-base font-semibold text-gray-900">
                             Kendala Akses atau Lupa Password?
                         </h3>
 
-                        <p class="mt-2 text-xs leading-5 text-gray-500">
+                        <p class="mt-2 text-[13px] leading-relaxed text-gray-500
+                                  sm:text-xs sm:leading-5">
                             Tim IT Sekolah siap membantu jika Anda
                             mengalami masalah saat login, lupa kata
                             sandi, atau memerlukan bantuan teknis
@@ -251,14 +281,18 @@
                         <a
                             href="#"
                             class="faq-cta group relative mt-4 inline-flex
-                                   items-center gap-2 overflow-hidden
-                                   rounded-lg bg-blue-600 px-4 py-2.5
-                                   text-[10px] font-medium text-white
+                                   w-full items-center justify-center gap-2
+                                   overflow-hidden rounded-lg bg-blue-600
+                                   px-4 py-3 text-[13px] font-medium text-white
                                    transition duration-300
                                    hover:-translate-y-0.5
                                    hover:bg-blue-700 hover:shadow-lg
                                    hover:shadow-blue-600/25
-                                   active:translate-y-0"
+                                   focus-visible:outline focus-visible:outline-2
+                                   focus-visible:outline-offset-2
+                                   focus-visible:outline-blue-500
+                                   active:translate-y-0 active:scale-[0.98]
+                                   sm:w-auto sm:py-2.5 sm:text-[10px]"
                         >
                             {{-- Shine --}}
                             <span
@@ -271,12 +305,12 @@
                                        group-hover:translate-x-full"
                             ></span>
 
-                            <x-lucide-headset class="faq-headset relative h-4 w-4" />
+                            <x-lucide-headset class="faq-headset relative h-4 w-4 shrink-0" />
 
                             <span class="relative">Hubungi Tim IT Sekolah</span>
 
                             <x-lucide-arrow-right
-                                class="relative h-3.5 w-3.5
+                                class="relative h-3.5 w-3.5 shrink-0
                                        transition-transform
                                        duration-200
                                        group-hover:translate-x-1"

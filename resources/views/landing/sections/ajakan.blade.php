@@ -84,10 +84,6 @@
         animation-delay: 1.3s;
     }
 
-    #ajakan .ajakan-card:hover .ajakan-icon svg {
-        animation: ajakan-icon-pop .6s ease-in-out;
-    }
-
     /* Tombol: kilau berkala */
     @keyframes ajakan-shine {
         0%, 70% { transform: translateX(-120%); }
@@ -98,10 +94,17 @@
         animation: ajakan-shine 4.5s ease-in-out infinite;
     }
 
-    #ajakan .ajakan-btn:hover .ajakan-shine {
-        animation: none;
-        transform: translateX(120%);
-        transition: transform .7s ease-out;
+    /* Efek hover hanya untuk perangkat yang punya hover */
+    @media (hover: hover) {
+        #ajakan .ajakan-card:hover .ajakan-icon svg {
+            animation: ajakan-icon-pop .6s ease-in-out;
+        }
+
+        #ajakan .ajakan-btn:hover .ajakan-shine {
+            animation: none;
+            transform: translateX(120%);
+            transition: transform .7s ease-out;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -126,13 +129,17 @@
 
 <section id="ajakan" class="bg-[#FDFDFD]">
 
-    <div class="mx-auto max-w-7xl px-6 py-10">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
 
         <div data-reveal>
+            {{-- HP/tablet kecil: bertumpuk & rata tengah. md ke atas: satu baris. --}}
             <div
                 class="ajakan-card group relative flex flex-col
-                       items-center gap-6 overflow-hidden rounded-2xl
-                       bg-blue-50/60 px-8 py-8 md:flex-row"
+                       items-center gap-5 overflow-hidden rounded-2xl
+                       bg-blue-50/60 px-5 py-7
+                       sm:gap-6 sm:px-8 sm:py-8
+                       md:flex-row md:gap-8
+                       lg:px-10"
             >
 
                 {{-- Background Decoration --}}
@@ -163,7 +170,7 @@
                     class="ajakan-item relative shrink-0"
                     style="--d: .15s"
                 >
-                    <div class="ajakan-icon-box relative h-16 w-16">
+                    <div class="ajakan-icon-box relative h-14 w-14 sm:h-16 sm:w-16">
 
                         {{-- Ripple --}}
                         <span
@@ -178,31 +185,32 @@
                         ></span>
 
                         <div
-                            class="ajakan-icon relative flex h-16 w-16
+                            class="ajakan-icon relative flex h-14 w-14
                                    items-center justify-center
-                                   rounded-xl bg-blue-100
-                                   text-blue-600"
+                                   rounded-xl bg-blue-100 text-blue-600
+                                   sm:h-16 sm:w-16"
                         >
-                            <x-lucide-shield-check class="h-9 w-9" />
+                            <x-lucide-shield-check class="h-8 w-8 sm:h-9 sm:w-9" />
                         </div>
 
                     </div>
                 </div>
 
                 {{-- Text --}}
-                <div class="relative flex-1 text-center md:text-left">
+                <div class="relative min-w-0 flex-1 text-center md:text-left">
 
                     <h2
-                        class="ajakan-item text-base font-semibold
-                               text-gray-900"
+                        class="ajakan-item text-lg font-semibold
+                               leading-snug text-gray-900 sm:text-base"
                         style="--d: .25s"
                     >
                         Siap Mengelola Akademik Sekolah Lebih Baik?
                     </h2>
 
                     <p
-                        class="ajakan-item mt-2 max-w-2xl text-xs
-                               leading-5 text-gray-600"
+                        class="ajakan-item mx-auto mt-2 max-w-2xl text-[13px]
+                               leading-relaxed text-gray-600
+                               sm:text-xs sm:leading-5 md:mx-0"
                         style="--d: .35s"
                     >
                         Masuk ke Portal Internal untuk Mengakses Nilai, Jadwal,
@@ -214,20 +222,24 @@
 
                 {{-- Button --}}
                 <div
-                    class="ajakan-item relative shrink-0"
+                    class="ajakan-item relative w-full shrink-0 sm:w-auto"
                     style="--d: .45s"
                 >
 
                     <a
                         href="{{ route('login') }}"
                         class="ajakan-btn group/btn relative inline-flex
-                               items-center gap-2.5 overflow-hidden
-                               rounded-lg bg-blue-600 px-5 py-3
-                               text-xs font-medium text-white
+                               w-full items-center justify-center gap-2.5
+                               overflow-hidden rounded-lg bg-blue-600
+                               px-5 py-3.5 text-sm font-medium text-white
                                transition duration-300
                                hover:-translate-y-0.5 hover:bg-blue-700
                                hover:shadow-lg hover:shadow-blue-600/25
-                               active:translate-y-0"
+                               focus-visible:outline focus-visible:outline-2
+                               focus-visible:outline-offset-2
+                               focus-visible:outline-blue-500
+                               active:translate-y-0 active:scale-[0.98]
+                               sm:w-auto sm:py-3 sm:text-xs"
                     >
                         {{-- Shine --}}
                         <span

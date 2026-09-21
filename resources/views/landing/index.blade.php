@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Beranda')
+@section('title', 'Sistem Akademik Sekolah')
 
 @section('content')
 

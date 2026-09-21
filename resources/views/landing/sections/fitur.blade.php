@@ -54,6 +54,22 @@ $features = [
         filter: none;
     }
 
+    /* Jeda kartu mengikuti jumlah kolom:
+       1 kolom  -> tanpa jeda
+       2 kolom  -> --d2 (kiri ke kanan per 2 kartu)
+       3 kolom  -> --d3 (kiri ke kanan per 3 kartu) */
+    #fitur .fitur-item {
+        --d: 0s;
+    }
+
+    @media (min-width: 640px) {
+        #fitur .fitur-item { --d: var(--d2, 0s); }
+    }
+
+    @media (min-width: 1024px) {
+        #fitur .fitur-item { --d: var(--d3, 0s); }
+    }
+
     /* Badge Dot Pulse */
     @keyframes fitur-pulse {
         0%   { transform: scale(1);   opacity: .6; }
@@ -86,10 +102,6 @@ $features = [
         100% { transform: scale(1)   rotate(0); }
     }
 
-    #fitur .fitur-card:hover .fitur-icon svg {
-        animation: fitur-icon-pop .6s ease-in-out;
-    }
-
     /* Link Underline */
     #fitur .fitur-link-line {
         transform: scaleX(0);
@@ -97,9 +109,27 @@ $features = [
         transition: transform .35s cubic-bezier(.22, 1, .36, 1);
     }
 
-    #fitur .fitur-link:hover .fitur-link-line,
     #fitur .fitur-link:focus-visible .fitur-link-line {
         transform: scaleX(1);
+    }
+
+    /* Di layar sentuh garis bawah langsung terlihat sebagai petunjuk bisa di-tap */
+    @media (hover: none) {
+        #fitur .fitur-link-line {
+            transform: scaleX(1);
+            opacity: .35;
+        }
+    }
+
+    /* Efek hover hanya untuk perangkat yang punya hover */
+    @media (hover: hover) {
+        #fitur .fitur-card:hover .fitur-icon svg {
+            animation: fitur-icon-pop .6s ease-in-out;
+        }
+
+        #fitur .fitur-link:hover .fitur-link-line {
+            transform: scaleX(1);
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -117,12 +147,12 @@ $features = [
     }
 </style>
 
-<section id="fitur" class="bg-[#FDFDFD] py-16">
+<section id="fitur" class="scroll-mt-16 bg-[#FDFDFD] py-14 sm:py-16 lg:py-20">
 
-    <div class="mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
         {{-- Header --}}
-        <div class="mb-10 text-center">
+        <div class="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
 
             <div data-reveal style="--d: 0s">
                 <div
@@ -140,20 +170,20 @@ $features = [
                 </div>
             </div>
 
-            <h1
+            <h2
                 data-reveal
                 style="--d: .1s"
-                class="mt-3 text-3xl font-semibold
+                class="mt-3 text-[1.75rem] font-semibold
                        tracking-tight text-gray-900
                        sm:text-4xl"
             >
                 Fitur Utama
-            </h1>
+            </h2>
 
             <p
                 data-reveal
                 style="--d: .2s"
-                class="mt-3 text-sm font-medium text-gray-500"
+                class="mt-3 text-[15px] font-medium text-gray-500 sm:text-sm"
             >
                 Semua Kebutuhan Akademik dalam Satu Tempat
             </p>
@@ -163,8 +193,9 @@ $features = [
 
         {{-- Feature Cards --}}
         <div
-            class="grid grid-cols-1 gap-5
-                   sm:grid-cols-2 lg:grid-cols-3"
+            class="grid grid-cols-1 gap-4
+                   sm:grid-cols-2 sm:gap-5
+                   lg:grid-cols-3"
         >
 
             @foreach ($features as $feature)
@@ -172,18 +203,20 @@ $features = [
                 {{-- Delay berdasarkan kolom, jadi tiap baris muncul kiri ke kanan --}}
                 <div
                     data-reveal
-                    style="--d: {{ ($loop->index % 3) * .12 }}s"
-                    class="h-full"
+                    style="--d2: {{ ($loop->index % 2) * .12 }}s; --d3: {{ ($loop->index % 3) * .12 }}s"
+                    class="fitur-item h-full"
                 >
 
                     <div
                         class="fitur-card group relative h-full
                                overflow-hidden rounded-2xl border
-                               border-gray-100 bg-white p-6 shadow-sm
+                               border-gray-100 bg-white p-5 shadow-sm
                                transition-[transform,box-shadow]
                                duration-300 ease-out
                                hover:-translate-y-1.5 hover:shadow-xl
-                               hover:shadow-gray-200/70"
+                               hover:shadow-gray-200/70
+                               active:scale-[0.99]
+                               sm:p-6"
                     >
 
                         {{-- Spotlight --}}
@@ -206,12 +239,13 @@ $features = [
                                    group-hover:opacity-100"
                         ></span>
 
-                        <div class="relative">
+                        {{-- Mobile: ikon di kiri, teks di kanan. Tablet ke atas: ikon di atas teks. --}}
+                        <div class="relative flex items-start gap-4 sm:block">
 
                             {{-- Icon --}}
                             <div
-                                class="fitur-icon flex h-11 w-11 items-center
-                                       justify-center rounded-xl
+                                class="fitur-icon flex h-11 w-11 shrink-0
+                                       items-center justify-center rounded-xl
                                        bg-blue-50 text-blue-600
                                        transition-all duration-500
                                        ease-[cubic-bezier(.34,1.56,.64,1)]
@@ -253,39 +287,49 @@ $features = [
 
 
                             {{-- Content --}}
-                            <h2 class="mt-5 text-base font-semibold text-gray-900">
-                                {{ $feature['title'] }}
-                            </h2>
+                            <div class="min-w-0 flex-1">
 
-                            <p class="mt-3 text-xs leading-relaxed text-gray-500">
-                                {{ $feature['description'] }}
-                            </p>
+                                <h3 class="text-base font-semibold text-gray-900 sm:mt-5">
+                                    {{ $feature['title'] }}
+                                </h3>
+
+                                <p class="mt-2 text-[13px] leading-relaxed text-gray-500
+                                          sm:mt-3 sm:text-xs">
+                                    {{ $feature['description'] }}
+                                </p>
 
 
-                            {{-- Link --}}
-                            <a
-                                href="#"
-                                class="fitur-link mt-4 inline-flex items-center
-                                       gap-1 text-xs font-medium text-blue-600
-                                       transition hover:text-blue-700"
-                            >
-                                <span class="relative">
-                                    Pelajari Selengkapnya
+                                {{-- Link --}}
+                                <a
+                                    href="#"
+                                    class="fitur-link mt-3 inline-flex items-center
+                                           gap-1 py-1 text-[13px] font-medium
+                                           text-blue-600 transition
+                                           hover:text-blue-700
+                                           focus-visible:outline focus-visible:outline-2
+                                           focus-visible:outline-offset-2
+                                           focus-visible:outline-blue-500
+                                           sm:mt-4 sm:py-0 sm:text-xs"
+                                >
+                                    <span class="relative">
+                                        Pelajari Selengkapnya
 
-                                    <span
-                                        aria-hidden="true"
-                                        class="fitur-link-line absolute
-                                               -bottom-0.5 left-0 h-px w-full
-                                               bg-current"
-                                    ></span>
-                                </span>
+                                        <span
+                                            aria-hidden="true"
+                                            class="fitur-link-line absolute
+                                                   -bottom-0.5 left-0 h-px w-full
+                                                   bg-current"
+                                        ></span>
+                                    </span>
 
-                                <x-lucide-arrow-right
-                                    class="h-3.5 w-3.5
-                                           transition-transform duration-200
-                                           group-hover:translate-x-1"
-                                />
-                            </a>
+                                    <x-lucide-arrow-right
+                                        class="h-3.5 w-3.5
+                                               transition-transform duration-200
+                                               group-hover:translate-x-1"
+                                    />
+                                </a>
+
+                            </div>
 
                         </div>
 

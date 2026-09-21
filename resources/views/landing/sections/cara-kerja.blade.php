@@ -37,20 +37,31 @@
         filter: none;
     }
 
+    /* Jeda kartu: tanpa jeda saat bertumpuk (HP), bertahap saat 3 kolom */
+    #cara-kerja .cara-item {
+        --d: 0s;
+    }
+
+    @media (min-width: 768px) {
+        #cara-kerja .cara-item { --d: var(--d3, 0s); }
+    }
+
     /* Connector Chip (muncul setelah kartu) */
     #cara-kerja.reveal-ready .cara-chip {
         opacity: 0;
-        transform: scale(.3);
+        scale: .3;
         transition:
             opacity .5s ease calc(var(--d, 0s) + .45s),
-            transform .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d, 0s) + .45s);
+            scale .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d, 0s) + .45s);
     }
 
     #cara-kerja.reveal-ready .is-visible .cara-chip {
         opacity: 1;
-        transform: scale(1);
+        scale: 1;
     }
 
+    /* Panah bergerak searah chip: horizontal di desktop, vertikal di HP
+       (chip diputar 90deg di HP sehingga arah gerak ikut berputar) */
     @keyframes cara-nudge {
         0%, 100% { transform: translateX(0); }
         50%      { transform: translateX(3px); }
@@ -92,8 +103,11 @@
         100% { transform: scale(1)   rotate(0); }
     }
 
-    #cara-kerja .cara-card:hover .cara-icon {
-        animation: cara-icon-pop .6s ease-in-out;
+    /* Efek hover hanya untuk perangkat yang punya hover */
+    @media (hover: hover) {
+        #cara-kerja .cara-card:hover .cara-icon {
+            animation: cara-icon-pop .6s ease-in-out;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -101,6 +115,7 @@
         #cara-kerja.reveal-ready .cara-chip {
             opacity: 1;
             transform: none;
+            scale: 1;
             filter: none;
             transition: none;
         }
@@ -113,20 +128,20 @@
     }
 </style>
 
-<section id="cara-kerja" class="bg-[#FDFDFD]">
+<section id="cara-kerja" class="scroll-mt-16 bg-[#FDFDFD]">
 
-    <div class="mx-auto max-w-7xl px-6 py-20">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:py-20">
 
         {{-- Heading --}}
-        <div class="text-center">
+        <div class="mx-auto max-w-2xl text-center">
 
             {{-- Badge --}}
             <div data-reveal style="--d: 0s">
                 <div
-                    class="mb-5 inline-flex items-center gap-2
+                    class="mb-4 inline-flex items-center gap-2
                            rounded-full bg-blue-50 px-3 py-1.5
                            text-[10px] font-medium uppercase
-                           tracking-wider text-blue-600"
+                           tracking-wider text-blue-600 sm:mb-5"
                 >
                     <span
                         class="cara-dot relative h-1.5 w-1.5
@@ -141,7 +156,7 @@
             <h2
                 data-reveal
                 style="--d: .1s"
-                class="text-3xl font-semibold tracking-tight
+                class="text-[1.75rem] font-semibold tracking-tight
                        text-gray-900 sm:text-4xl"
             >
                 Cara Kerja
@@ -150,31 +165,39 @@
             <p
                 data-reveal
                 style="--d: .2s"
-                class="mt-3 text-sm font-medium text-gray-500"
+                class="mt-3 text-[15px] font-medium text-gray-500 sm:text-sm"
             >
                 Mulai Menggunakan SASKANSA dalam 3 Langkah Mudah
             </p>
 
         </div>
 
-        {{-- Steps --}}
-        <div class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+        {{-- Steps
+             HP/tablet kecil: bertumpuk vertikal dengan panah ke bawah
+             md ke atas     : 3 kolom dengan panah ke kanan --}}
+        <div
+            class="mx-auto mt-8 grid max-w-lg grid-cols-1 gap-7
+                   sm:mt-10
+                   md:max-w-none md:grid-cols-3 md:gap-5
+                   lg:gap-8"
+        >
 
             @foreach ($steps as $step)
                 <div
                     data-reveal
-                    style="--d: {{ .3 + $loop->index * .15 }}s"
-                    class="relative h-full"
+                    style="--d3: {{ .3 + $loop->index * .15 }}s"
+                    class="cara-item relative h-full"
                 >
 
                     <div
                         class="cara-card group relative h-full
                                overflow-hidden rounded-2xl border
-                               border-gray-100 bg-white p-6 shadow-sm
+                               border-gray-100 bg-white p-5 shadow-sm
                                transition-[transform,box-shadow]
                                duration-300 ease-out
                                hover:-translate-y-1.5 hover:shadow-xl
-                               hover:shadow-gray-200/70"
+                               hover:shadow-gray-200/70
+                               sm:p-6"
                     >
 
                         {{-- Spotlight --}}
@@ -211,7 +234,7 @@
                                     />
                                 </div>
 
-                                <div>
+                                <div class="min-w-0">
 
                                     <span
                                         class="text-[10px] font-medium
@@ -221,7 +244,7 @@
                                         Langkah 0{{ $loop->iteration }}
                                     </span>
 
-                                    <h3 class="mt-0.5 text-sm font-semibold text-gray-900">
+                                    <h3 class="mt-0.5 text-[15px] font-semibold text-gray-900 sm:text-sm">
                                         {{ $step['title'] }}
                                     </h3>
 
@@ -229,7 +252,8 @@
 
                             </div>
 
-                            <p class="mt-4 text-xs leading-5 text-gray-500">
+                            <p class="mt-4 text-[13px] leading-relaxed text-gray-500
+                                      sm:text-xs sm:leading-5">
                                 {{ $step['text'] }}
                             </p>
 
@@ -237,15 +261,20 @@
 
                     </div>
 
-                    {{-- Connector antar langkah (desktop) --}}
+                    {{-- Connector antar langkah
+                         HP     : di bawah kartu, panah menghadap ke bawah (chip diputar 90deg)
+                         md ke atas: di sisi kanan kartu, panah menghadap ke kanan --}}
                     @unless ($loop->last)
                         <span
                             aria-hidden="true"
-                            class="cara-chip absolute -right-5.5 top-8.5
-                                   z-10 hidden h-6 w-6 items-center
-                                   justify-center rounded-full border
-                                   border-gray-100 bg-white text-blue-600
-                                   shadow-sm md:flex"
+                            class="cara-chip absolute left-1/2 -bottom-6.5 z-10
+                                   flex h-6 w-6 -translate-x-1/2 rotate-90
+                                   items-center justify-center rounded-full
+                                   border border-gray-100 bg-white text-blue-600
+                                   shadow-sm
+                                   md:bottom-auto md:left-auto md:-right-5.5
+                                   md:top-8.5 md:translate-x-0 md:rotate-0
+                                   lg:-right-7"
                         >
                             <x-lucide-arrow-right class="h-3 w-3" />
                         </span>
